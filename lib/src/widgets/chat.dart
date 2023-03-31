@@ -328,6 +328,8 @@ class Chat extends StatefulWidget {
 
 /// [Chat] widget state.
 class ChatState extends State<Chat> {
+  Map<String, int> get autoScrollIndexById => _autoScrollIndexById;
+
   /// Used to get the correct auto scroll index from [_autoScrollIndexById].
   static const String _unreadHeaderId = 'unread_header_id';
 
@@ -338,7 +340,10 @@ class ChatState extends State<Chat> {
   bool _isImageViewVisible = false;
 
   /// Keep track of all the auto scroll indices by their respective message's id to allow animating to them.
+  ///
+
   final Map<String, int> _autoScrollIndexById = {};
+
   late final AutoScrollController _scrollController;
 
   @override
@@ -396,10 +401,17 @@ class ChatState extends State<Chat> {
   }
 
   /// Scroll to the message with the specified [id].
-  void scrollToMessage(String id, {Duration? duration}) =>
+  Future<dynamic> scrollToMessage(String id, {Duration? duration}) =>
       _scrollController.scrollToIndex(
         _autoScrollIndexById[id]!,
         duration: duration ?? scrollAnimationDuration,
+        preferPosition: AutoScrollPosition.middle,
+      );
+
+  void highlight(String id, {Duration? duration}) =>
+      _scrollController.highlight(
+        _autoScrollIndexById[id]!,
+        highlightDuration: duration ?? const Duration(milliseconds: 500),
       );
 
   @override
@@ -440,6 +452,7 @@ class ChatState extends State<Chat> {
                                       item,
                                       constraints,
                                       index,
+                                      widget.theme.highlightColor,
                                     ),
                                     items: _chatMessages,
                                     keyboardDismissBehavior:
@@ -515,6 +528,7 @@ class ChatState extends State<Chat> {
     Object object,
     BoxConstraints constraints,
     int? index,
+    Color? highlightColor,
   ) {
     if (object is DateHeader) {
       return widget.dateHeaderBuilder?.call(object) ??
@@ -602,6 +616,15 @@ class ChatState extends State<Chat> {
         index: index ?? -1,
         key: Key('scroll-${message.id}'),
         child: messageWidget,
+        builder: (context, highlight) => DecoratedBoxTransition(
+          decoration: DecorationTween(
+            begin: const BoxDecoration(),
+            end: BoxDecoration(
+              color: highlightColor,
+            ),
+          ).animate(highlight),
+          child: messageWidget,
+        ),
       );
     }
   }

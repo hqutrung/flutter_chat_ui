@@ -110,6 +110,7 @@ abstract class ChatTheme {
     required this.userAvatarNameColors,
     required this.userAvatarTextStyle,
     required this.userNameTextStyle,
+    this.highlightColor,
   });
 
   /// Icon for select attachment button.
@@ -120,6 +121,9 @@ abstract class ChatTheme {
 
   /// Used as a background color of a chat widget.
   final Color backgroundColor;
+
+  /// Used as a highlight color of a chat widget.
+  final Color? highlightColor;
 
   /// Margin around date dividers.
   final EdgeInsets dateDividerMargin;
@@ -459,6 +463,7 @@ class DefaultChatTheme extends ChatTheme {
       fontWeight: FontWeight.w800,
       height: 1.333,
     ),
+    super.highlightColor,
   });
 }
 
@@ -628,5 +633,6 @@ class DarkChatTheme extends ChatTheme {
       fontWeight: FontWeight.w800,
       height: 1.333,
     ),
+    super.highlightColor,
   });
 }
