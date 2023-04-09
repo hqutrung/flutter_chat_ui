@@ -120,7 +120,11 @@ class Message extends StatelessWidget {
   final void Function(BuildContext context, types.Message)? onMessageDoubleTap;
 
   /// Called when user makes a long press on any message.
-  final void Function(BuildContext context, types.Message)? onMessageLongPress;
+  final void Function(
+    BuildContext context,
+    types.Message,
+    Widget messageWidget,
+  )? onMessageLongPress;
 
   /// Called when user makes a long press on status icon in any message.
   final void Function(BuildContext context, types.Message)?
@@ -246,7 +250,16 @@ class Message extends StatelessWidget {
               children: [
                 GestureDetector(
                   onDoubleTap: () => onMessageDoubleTap?.call(context, message),
-                  onLongPress: () => onMessageLongPress?.call(context, message),
+                  onLongPress: () => onMessageLongPress?.call(
+                    context,
+                    message,
+                    _bubbleBuilder(
+                      context,
+                      borderRadius.resolve(Directionality.of(context)),
+                      currentUserIsAuthor,
+                      enlargeEmojis,
+                    ),
+                  ),
                   onTap: () => onMessageTap?.call(context, message),
                   child: onMessageVisibilityChanged != null
                       ? VisibilityDetector(

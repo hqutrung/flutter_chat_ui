@@ -24,5 +24,6 @@ export 'src/widgets/message/system_message.dart';
 export 'src/widgets/message/text_message.dart';
 export 'src/widgets/message/user_avatar.dart';
 export 'src/widgets/message/user_name.dart';
+export 'src/widgets/state/state.dart';
 export 'src/widgets/typing_indicator.dart';
 export 'src/widgets/unread_header.dart';

@@ -36,6 +36,7 @@ class Chat extends StatefulWidget {
     this.audioMessageBuilder,
     this.avatarBuilder,
     this.bubbleBuilder,
+    this.highlightBubbleBuilder,
     this.bubbleRtlAlignment = BubbleRtlAlignment.right,
     this.customBottomWidget,
     this.customDateHeaderText,
@@ -110,6 +111,13 @@ class Chat extends StatefulWidget {
     required types.Message message,
     required bool nextMessageInGroup,
   })? bubbleBuilder;
+
+  /// See [Message.highlightBubbleBuilder].
+  final Widget Function(
+    Widget child, {
+    required types.Message message,
+    required bool nextMessageInGroup,
+  })? highlightBubbleBuilder;
 
   /// See [Message.bubbleRtlAlignment].
   final BubbleRtlAlignment? bubbleRtlAlignment;
@@ -239,7 +247,11 @@ class Chat extends StatefulWidget {
   final void Function(BuildContext context, types.Message)? onMessageDoubleTap;
 
   /// See [Message.onMessageLongPress].
-  final void Function(BuildContext context, types.Message)? onMessageLongPress;
+  final void Function(
+    BuildContext context,
+    types.Message,
+    Widget messageWidget,
+  )? onMessageLongPress;
 
   /// See [Message.onMessageStatusLongPress].
   final void Function(BuildContext context, types.Message)?
@@ -558,15 +570,59 @@ class ChatState extends State<Chat> {
       final message = map['message']! as types.Message;
 
       final Widget messageWidget;
+      final Widget highlightMessage;
 
       if (message is types.SystemMessage) {
         messageWidget = widget.systemMessageBuilder?.call(message) ??
+            SystemMessage(message: message.text);
+        highlightMessage = widget.systemMessageBuilder?.call(message) ??
             SystemMessage(message: message.text);
       } else {
         final messageWidth =
             widget.showUserAvatars && message.author.id != widget.user.id
                 ? min(constraints.maxWidth * 0.72, 440).floor()
                 : min(constraints.maxWidth * 0.78, 440).floor();
+        highlightMessage = Message(
+          audioMessageBuilder: widget.audioMessageBuilder,
+          avatarBuilder: widget.avatarBuilder,
+          bubbleBuilder: widget.highlightBubbleBuilder,
+          bubbleRtlAlignment: widget.bubbleRtlAlignment,
+          customMessageBuilder: widget.customMessageBuilder,
+          customStatusBuilder: widget.customStatusBuilder,
+          emojiEnlargementBehavior: widget.emojiEnlargementBehavior,
+          fileMessageBuilder: widget.fileMessageBuilder,
+          hideBackgroundOnEmojiMessages: widget.hideBackgroundOnEmojiMessages,
+          imageHeaders: widget.imageHeaders,
+          imageMessageBuilder: widget.imageMessageBuilder,
+          message: message,
+          messageWidth: messageWidth,
+          nameBuilder: widget.nameBuilder,
+          onAvatarTap: widget.onAvatarTap,
+          onMessageDoubleTap: widget.onMessageDoubleTap,
+          onMessageLongPress: widget.onMessageLongPress,
+          onMessageStatusLongPress: widget.onMessageStatusLongPress,
+          onMessageStatusTap: widget.onMessageStatusTap,
+          onMessageTap: (context, tappedMessage) {
+            if (tappedMessage is types.ImageMessage &&
+                widget.disableImageGallery != true) {
+              _onImagePressed(tappedMessage);
+            }
+
+            widget.onMessageTap?.call(context, tappedMessage);
+          },
+          onMessageVisibilityChanged: widget.onMessageVisibilityChanged,
+          onPreviewDataFetched: _onPreviewDataFetched,
+          roundBorder: map['nextMessageInGroup'] == true,
+          showAvatar: map['nextMessageInGroup'] == false,
+          showName: map['showName'] == true,
+          showStatus: map['showStatus'] == true,
+          showUserAvatars: widget.showUserAvatars,
+          textMessageBuilder: widget.textMessageBuilder,
+          textMessageOptions: widget.textMessageOptions,
+          usePreviewData: widget.usePreviewData,
+          userAgent: widget.userAgent,
+          videoMessageBuilder: widget.videoMessageBuilder,
+        );
 
         messageWidget = Message(
           audioMessageBuilder: widget.audioMessageBuilder,
@@ -615,7 +671,6 @@ class ChatState extends State<Chat> {
         controller: _scrollController,
         index: index ?? -1,
         key: Key('scroll-${message.id}'),
-        child: messageWidget,
         builder: (context, highlight) => DecoratedBoxTransition(
           decoration: DecorationTween(
             begin: const BoxDecoration(),
@@ -623,7 +678,16 @@ class ChatState extends State<Chat> {
               color: highlightColor,
             ),
           ).animate(highlight),
-          child: messageWidget,
+          child: AnimatedBuilder(
+            animation: highlight,
+            builder: (context, child) {
+              if (highlight.value == 0) {
+                return messageWidget;
+              } else {
+                return highlightMessage;
+              }
+            },
+          ),
         ),
       );
     }
