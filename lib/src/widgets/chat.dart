@@ -96,11 +96,21 @@ class Chat extends StatefulWidget {
     this.userAgent,
     this.useTopSafeAreaInset,
     this.videoMessageBuilder,
+    this.gifMessageBuilder,
+    this.stickerMessageBuilder,
   });
 
   /// See [Message.audioMessageBuilder].
   final Widget Function(types.AudioMessage, {required int messageWidth})?
       audioMessageBuilder;
+
+  /// Build an image message inside predefined bubble.
+  final Widget Function(types.GifMessage, {required int messageWidth})?
+      gifMessageBuilder;
+
+  /// Build an image message inside predefined bubble.
+  final Widget Function(types.StickerMessage, {required int messageWidth})?
+      stickerMessageBuilder;
 
   /// See [Message.avatarBuilder].
   final Widget Function(String userId)? avatarBuilder;
@@ -594,6 +604,8 @@ class ChatState extends State<Chat> {
           hideBackgroundOnEmojiMessages: widget.hideBackgroundOnEmojiMessages,
           imageHeaders: widget.imageHeaders,
           imageMessageBuilder: widget.imageMessageBuilder,
+          gifMessageBuilder: widget.gifMessageBuilder,
+          stickerMessageBuilder: widget.stickerMessageBuilder,
           message: message,
           messageWidth: messageWidth,
           nameBuilder: widget.nameBuilder,
@@ -636,6 +648,8 @@ class ChatState extends State<Chat> {
           hideBackgroundOnEmojiMessages: widget.hideBackgroundOnEmojiMessages,
           imageHeaders: widget.imageHeaders,
           imageMessageBuilder: widget.imageMessageBuilder,
+          gifMessageBuilder: widget.gifMessageBuilder,
+          stickerMessageBuilder: widget.stickerMessageBuilder,
           message: message,
           messageWidth: messageWidth,
           nameBuilder: widget.nameBuilder,

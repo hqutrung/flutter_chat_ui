@@ -52,6 +52,8 @@ class Message extends StatelessWidget {
     required this.usePreviewData,
     this.userAgent,
     this.videoMessageBuilder,
+    this.gifMessageBuilder,
+    this.stickerMessageBuilder,
   });
 
   /// Build an audio message inside predefined bubble.
@@ -103,6 +105,14 @@ class Message extends StatelessWidget {
   /// Build an image message inside predefined bubble.
   final Widget Function(types.ImageMessage, {required int messageWidth})?
       imageMessageBuilder;
+
+  /// Build an image message inside predefined bubble.
+  final Widget Function(types.GifMessage, {required int messageWidth})?
+      gifMessageBuilder;
+
+  /// Build an image message inside predefined bubble.
+  final Widget Function(types.StickerMessage, {required int messageWidth})?
+      stickerMessageBuilder;
 
   /// Any message type.
   final types.Message message;
@@ -369,6 +379,16 @@ class Message extends StatelessWidget {
                 message: imageMessage,
                 messageWidth: messageWidth,
               );
+      case types.MessageType.gif:
+        final imageMessage = message as types.GifMessage;
+        return gifMessageBuilder != null
+            ? gifMessageBuilder!(imageMessage, messageWidth: messageWidth)
+            : Container();
+      case types.MessageType.sticker:
+        final imageMessage = message as types.StickerMessage;
+        return stickerMessageBuilder != null
+            ? stickerMessageBuilder!(imageMessage, messageWidth: messageWidth)
+            : Container();
       case types.MessageType.text:
         final textMessage = message as types.TextMessage;
         return textMessageBuilder != null
