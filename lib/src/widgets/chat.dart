@@ -98,6 +98,7 @@ class Chat extends StatefulWidget {
     this.videoMessageBuilder,
     this.gifMessageBuilder,
     this.stickerMessageBuilder,
+    this.onNotification,
   });
 
   /// See [Message.audioMessageBuilder].
@@ -213,6 +214,8 @@ class Chat extends StatefulWidget {
 
   /// See [Input.options].
   final InputOptions inputOptions;
+
+  final Function(ScrollNotification)? onNotification;
 
   /// See [Input.isAttachmentUploading].
   final bool? isAttachmentUploading;
@@ -465,6 +468,7 @@ class ChatState extends State<Chat> {
                                     BoxConstraints constraints,
                                   ) =>
                                       ChatList(
+                                    onNotification: widget.onNotification,
                                     bottomWidget: widget.listBottomWidget,
                                     bubbleRtlAlignment:
                                         widget.bubbleRtlAlignment!,

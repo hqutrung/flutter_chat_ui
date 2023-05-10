@@ -25,10 +25,14 @@ class ChatList extends StatefulWidget {
     this.scrollPhysics,
     this.typingIndicatorOptions,
     required this.useTopSafeAreaInset,
+    this.onNotification,
   });
 
   /// A custom widget at the bottom of the list.
   final Widget? bottomWidget;
+
+  /// On Scroll Notification.
+  final Function(ScrollNotification)? onNotification;
 
   /// Used to set alignment of typing indicator.
   /// See [BubbleRtlAlignment].
@@ -116,6 +120,7 @@ class _ChatListState extends State<ChatList>
   Widget build(BuildContext context) =>
       NotificationListener<ScrollNotification>(
         onNotification: (notification) {
+          widget.onNotification?.call(notification);
           if (notification.metrics.pixels > 10.0 && !_indicatorOnScrollStatus) {
             setState(() {
               _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
