@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../../conditional/conditional.dart';
 import '../../models/bubble_rtl_alignment.dart';
 import '../../models/emoji_enlargement_behavior.dart';
 import '../../util.dart';
@@ -31,6 +32,7 @@ class Message extends StatelessWidget {
     required this.hideBackgroundOnEmojiMessages,
     this.imageHeaders,
     this.imageMessageBuilder,
+    this.imageProviderBuilder,
     required this.message,
     required this.messageWidth,
     this.nameBuilder,
@@ -61,14 +63,14 @@ class Message extends StatelessWidget {
       audioMessageBuilder;
 
   /// This is to allow custom user avatar builder
-  /// By using this we can fetch newest user info based on id
+  /// By using this we can fetch newest user info based on id.
   final Widget Function(String userId)? avatarBuilder;
 
   /// Customize the default bubble using this function. `child` is a content
   /// you should render inside your bubble, `message` is a current message
   /// (contains `author` inside) and `nextMessageInGroup` allows you to see
   /// if the message is a part of a group (messages are grouped when written
-  /// in quick succession by the same author)
+  /// in quick succession by the same author).
   final Widget Function(
     Widget child, {
     required types.Message message,
@@ -114,6 +116,13 @@ class Message extends StatelessWidget {
   final Widget Function(types.StickerMessage, {required int messageWidth})?
       stickerMessageBuilder;
 
+  /// See [Chat.imageProviderBuilder].
+  final ImageProvider Function({
+    required String uri,
+    required Map<String, String>? imageHeaders,
+    required Conditional conditional,
+  })? imageProviderBuilder;
+
   /// Any message type.
   final types.Message message;
 
@@ -121,7 +130,7 @@ class Message extends StatelessWidget {
   final int messageWidth;
 
   /// See [TextMessage.nameBuilder].
-  final Widget Function(String userId)? nameBuilder;
+  final Widget Function(types.User)? nameBuilder;
 
   /// See [UserAvatar.onAvatarTap].
   final void Function(types.User)? onAvatarTap;
@@ -376,6 +385,7 @@ class Message extends StatelessWidget {
             ? imageMessageBuilder!(imageMessage, messageWidth: messageWidth)
             : ImageMessage(
                 imageHeaders: imageHeaders,
+                imageProviderBuilder: imageProviderBuilder,
                 message: imageMessage,
                 messageWidth: messageWidth,
               );
