@@ -492,15 +492,20 @@ class ChatState extends State<Chat> {
                                 ),
                               ),
                       ),
-                      widget.customBottomWidget ??
-                          Input(
-                            isAttachmentUploading: widget.isAttachmentUploading,
-                            onAttachmentPressed: widget.onAttachmentPressed,
-                            onSendPressed: widget.onSendPressed,
-                            options: widget.inputOptions,
-                          ),
                     ],
                   ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: widget.customBottomWidget ??
+                      Input(
+                        isAttachmentUploading: widget.isAttachmentUploading,
+                        onAttachmentPressed: widget.onAttachmentPressed,
+                        onSendPressed: widget.onSendPressed,
+                        options: widget.inputOptions,
+                      ),
                 ),
                 if (_isImageViewVisible)
                   ImageGallery(
