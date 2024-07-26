@@ -111,6 +111,7 @@ abstract class ChatTheme {
     required this.userAvatarTextStyle,
     required this.userNameTextStyle,
     this.highlightColor,
+    this.highlightGradient,
   });
 
   /// Icon for select attachment button.
@@ -124,6 +125,9 @@ abstract class ChatTheme {
 
   /// Used as a highlight color of a chat widget.
   final Color? highlightColor;
+
+  /// Used as a highlight gradient of a chat widget.
+  final Gradient? highlightGradient;
 
   /// Margin around date dividers.
   final EdgeInsets dateDividerMargin;
@@ -462,6 +466,7 @@ class DefaultChatTheme extends ChatTheme {
       height: 1.333,
     ),
     super.highlightColor,
+    super.highlightGradient,
   });
 }
 
@@ -632,5 +637,6 @@ class DarkChatTheme extends ChatTheme {
       height: 1.333,
     ),
     super.highlightColor,
+    super.highlightGradient,
   });
 }
